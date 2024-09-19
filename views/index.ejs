@@ -5,14 +5,13 @@
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
-    <h1>Mini Messageboard</h1>
+    <h1>Mini Message Board</h1>
     <ul>
       <% messages.forEach((message) => { %>
       <li>
         <strong><%= message.user %>:</strong> <%= message.text %>
         <small>(<%= message.added.toDateString() %>)</small>
         <a href="/messages/<%= message.id %>">Open</a>
-        <!-- Add unique IDs if necessary -->
       </li>
       <% }) %>
     </ul>
