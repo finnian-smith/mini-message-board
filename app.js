@@ -14,6 +14,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// enable form data parsing
+app.use(express.urlencoded({ extended: true }));
+
 // index router
 app.use("/", indexRouter);
 
