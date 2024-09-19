@@ -11,6 +11,8 @@
       <li>
         <strong><%= message.user %>:</strong> <%= message.text %>
         <small>(<%= message.added.toDateString() %>)</small>
+        <a href="/messages/<%= message.id %>">Open</a>
+        <!-- Add unique IDs if necessary -->
       </li>
       <% }) %>
     </ul>
