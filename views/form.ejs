@@ -6,15 +6,38 @@
   </head>
   <body>
     <h1>Add a New Message</h1>
+
+    <!-- display validation errors -->
+    <% if (errors && errors.length > 0) { %>
+    <div class="error-messages">
+      <ul>
+        <% errors.forEach(error => { %>
+        <li><%= error.msg %></li>
+        <% }) %>
+      </ul>
+    </div>
+    <% } %>
+
     <form method="POST" action="/new">
       <label for="user">Your Name:</label>
-      <input type="text" id="user" name="messageUser" required />
+      <input
+        type="text"
+        id="user"
+        name="messageUser"
+        value="<%= typeof messageUser !== 'undefined' ? messageUser : '' %>"
+      />
 
       <label for="message">Message:</label>
-      <input type="text" id="message" name="messageText" required />
+      <input
+        type="text"
+        id="message"
+        name="messageText"
+        value="<%= typeof messageText !== 'undefined' ? messageText : '' %>"
+      />
 
       <button type="submit">Submit</button>
     </form>
+
     <a href="/">Back to messages</a>
   </body>
 </html>

@@ -1,3 +1,6 @@
+import { validationResult } from "express-validator";
+import { validateNewMessage } from "../middleware/validationMiddleware.js";
+
 const messages = [
   {
     id: 1,
@@ -22,23 +25,45 @@ export const renderIndex = (req, res) => {
 
 // render form page
 export const renderForm = (req, res) => {
-  res.render("form", { title: "Add a new message" });
-};
-
-// handle new message submission
-export const addNewMessage = (req, res) => {
-  const { messageUser, messageText } = req.body;
-
-  messages.push({
-    id: nextId,
-    text: messageText,
-    user: messageUser,
-    added: new Date(),
+  res.render("form", {
+    title: "Add a new message",
+    errors: [],
   });
-  nextId += 1;
-
-  res.redirect("/");
 };
+
+// handle new message submission with validation
+export const addNewMessage = [
+  validateNewMessage,
+
+  // process request after validation and sanitisation
+  (req, res) => {
+    // extract validation errors from request
+    const errors = validationResult(req);
+
+    // validation fails -> render form again with error messages
+    if (!errors.isEmpty()) {
+      return res.status(400).render("form", {
+        title: "Add a new message",
+        errors: errors.array(),
+        messageUser: req.body.messageUser,
+        messageText: req.body.messageText,
+      });
+    }
+
+    // no validation errors -> create new message
+    const { messageUser, messageText } = req.body;
+
+    messages.push({
+      id: nextId,
+      text: messageText,
+      user: messageUser,
+      added: new Date(),
+    });
+    nextId += 1;
+
+    res.redirect("/");
+  },
+];
 
 // handle displaying a single message
 export const showMessage = (req, res) => {
