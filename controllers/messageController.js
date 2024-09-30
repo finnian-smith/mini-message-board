@@ -1,25 +1,10 @@
 import { validationResult } from "express-validator";
 import { validateNewMessage } from "../middleware/validationMiddleware.js";
-
-const messages = [
-  {
-    id: 1,
-    text: "Hi there!",
-    user: "Armando",
-    added: new Date(),
-  },
-  {
-    id: 2,
-    text: "Hello world!",
-    user: "Charles",
-    added: new Date(),
-  },
-];
-
-let nextId = 3;
+import db from "../db/queries.js";
 
 // render index page
-export const renderIndex = (req, res) => {
+export const renderIndex = async (req, res) => {
+  let messages = await db.getAllMessages();
   res.render("index", { title: "Mini Message Board", messages: messages });
 };
 
@@ -36,7 +21,7 @@ export const addNewMessage = [
   validateNewMessage,
 
   // process request after validation and sanitisation
-  (req, res) => {
+  async (req, res) => {
     // extract validation errors from request
     const errors = validationResult(req);
 
@@ -53,22 +38,16 @@ export const addNewMessage = [
     // no validation errors -> create new message
     const { messageUser, messageText } = req.body;
 
-    messages.push({
-      id: nextId,
-      text: messageText,
-      user: messageUser,
-      added: new Date(),
-    });
-    nextId += 1;
+    await db.insertNewMessage(messageText, messageUser);
 
     res.redirect("/");
   },
 ];
 
 // handle displaying a single message
-export const showMessage = (req, res) => {
+export const showMessage = async (req, res) => {
   const messageId = parseInt(req.params.id);
-  const message = messages.find((msg) => msg.id === messageId);
+  const message = await db.getMessageById(messageId);
 
   if (message) {
     res.render("message", { title: "Message Details", message: message });
